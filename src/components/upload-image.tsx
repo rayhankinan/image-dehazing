@@ -1,26 +1,26 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import Image from "next/image";
 import { useDropzone } from "react-dropzone";
-import Preview from "@/types/preview";
 
 export default function UploadImage({
-  file,
-  setFile,
+  url,
+  setUrl,
 }: {
-  file: Preview | undefined;
-  setFile: React.Dispatch<React.SetStateAction<Preview | undefined>>;
+  url: string | undefined;
+  setUrl: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
+      // If no file is dropped, do nothing
       if (acceptedFiles.length === 0) return;
 
-      setFile(
-        Object.assign(acceptedFiles[0], {
-          preview: URL.createObjectURL(acceptedFiles[0]),
-        })
-      );
+      // If there is a previous file, revoke the object URL
+      if (url) URL.revokeObjectURL(url);
+
+      // Set the new object URL
+      setUrl(URL.createObjectURL(acceptedFiles[0]));
     },
-    [setFile]
+    [url, setUrl]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -77,16 +77,13 @@ export default function UploadImage({
             overflow: "hidden",
           }}
         >
-          {file ? (
+          {url ? (
             <Image
-              src={file.preview}
+              id="input"
+              src={url}
               width={250}
               height={250}
               alt="Preview"
-              // Revoke data uri after image is loaded
-              onLoad={() => {
-                URL.revokeObjectURL(file.preview);
-              }}
             />
           ) : (
             <p>Preview</p>

@@ -2,10 +2,9 @@ import { useState } from "react";
 import Head from "next/head";
 import PyScript from "@/components/pyscript";
 import UploadImage from "@/components/upload-image";
-import Preview from "@/types/preview";
 
 export default function Home() {
-  const [file, setFile] = useState<Preview>();
+  const [url, setUrl] = useState<string>();
 
   return (
     <>
@@ -19,10 +18,10 @@ export default function Home() {
         <title>Image Dehazing</title>
       </Head>
       <main>
-        <UploadImage file={file} setFile={setFile} />
+        <UploadImage url={url} setUrl={setUrl} />
         {/* This button will be disabled no matter what until the JavaScript has been loaded */}
-        <button py-click="hello_world" disabled={!file}>
-          Translate
+        <button py-click="get_blob_url" disabled={!url}>
+          Get Blob URL
         </button>
         <div id="output"></div>
         <PyScript />
