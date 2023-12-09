@@ -1,7 +1,12 @@
+import { useState } from "react";
 import Head from "next/head";
-import { PyScript } from "@/components/pyscript";
+import PyScript from "@/components/pyscript";
+import UploadImage from "@/components/upload-image";
+import Preview from "@/types/preview";
 
 export default function Home() {
+  const [file, setFile] = useState<Preview>();
+
   return (
     <>
       <Head>
@@ -11,19 +16,14 @@ export default function Home() {
           content="Tugas Makalah IF4073 Interpretasi dan Pengolahan Citra"
         />
         <link rel="icon" href="/favicon.ico" />
-        <title>🦜 Polyglot - Piratical PyScript</title>
+        <title>Image Dehazing</title>
       </Head>
       <main>
-        <h1>Polyglot 🦜 💬 🇬🇧 ➡️ 🏴‍☠️</h1>
-        <p>Translate English into Pirate speak...</p>
-        <input
-          type="text"
-          name="english"
-          id="english"
-          placeholder="Type English here..."
-        />
-        {/* This button will be disabled until the JavaScript has been loaded */}
-        <button py-click="translate_english">Translate</button>
+        <UploadImage file={file} setFile={setFile} />
+        {/* This button will be disabled no matter what until the JavaScript has been loaded */}
+        <button py-click="hello_world" disabled={!file}>
+          Translate
+        </button>
         <div id="output"></div>
         <PyScript />
       </main>

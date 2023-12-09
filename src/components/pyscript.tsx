@@ -1,6 +1,6 @@
 import React from "react";
 
-export function PyScript() {
+export default function PyScript() {
   return React.createElement("script", {
     type: "py",
     src: "/main.py",
