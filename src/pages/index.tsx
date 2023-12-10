@@ -21,14 +21,7 @@ export default function Home() {
         <title>Image Dehazing</title>
       </Head>
       <main>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "25px",
-          }}
-        >
+        <div className="flex flex-col items-center justify-center min-h-screen py-2 gap-8">
           <Dropbox inputUrl={inputUrl} setInputUrl={setInputUrl} />
           <InputImage inputUrl={inputUrl} />
           <ProcessButton inputUrl={inputUrl} />

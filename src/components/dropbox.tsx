@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Card, CardBody } from "@nextui-org/react";
-import Dropzone from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 
 export default function Dropbox({
   inputUrl,
@@ -23,22 +23,26 @@ export default function Dropbox({
     [inputUrl, setInputUrl]
   );
 
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: false,
+    accept: {
+      "image/*": [],
+    },
+  });
+
   return (
-    <Dropzone onDrop={onDrop}>
-      {({ getRootProps, getInputProps, isDragActive }) => (
-        <div {...getRootProps()}>
-          <input {...getInputProps()} />
-          <Card className="cursor-pointer">
-            <CardBody>
-              {isDragActive ? (
-                <p>Drop the image here!</p>
-              ) : (
-                <p>Drag and drop an image here, or click to select an image</p>
-              )}
-            </CardBody>
-          </Card>
-        </div>
-      )}
-    </Dropzone>
+    <div {...getRootProps()}>
+      <input {...getInputProps()} />
+      <Card className="cursor-pointer">
+        <CardBody>
+          {isDragActive ? (
+            <p>Drop the image here!</p>
+          ) : (
+            <p>Drag and drop an image here, or click to select an image</p>
+          )}
+        </CardBody>
+      </Card>
+    </div>
   );
 }
