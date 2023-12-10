@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 
@@ -31,8 +31,19 @@ export default function UploadImage({
     },
   });
 
+  const [src, setSrc] = useState<string>("/images/250x250.png");
+
+  useEffect(() => {
+    if (url) setSrc(url);
+  }, [url]);
+
   return (
-    <section>
+    <section
+      style={{
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <div
         {...getRootProps()}
         style={{
@@ -48,6 +59,7 @@ export default function UploadImage({
           color: "#bdbdbd",
           outline: "none",
           transition: "border .24s ease-in-out",
+          cursor: "pointer",
         }}
       >
         <input
@@ -77,17 +89,14 @@ export default function UploadImage({
             overflow: "hidden",
           }}
         >
-          {url ? (
-            <Image
-              id="input"
-              src={url}
-              width={250}
-              height={250}
-              alt="Preview"
-            />
-          ) : (
-            <p>Preview</p>
-          )}
+          <Image
+            id="input"
+            key={src}
+            src={src}
+            width={250}
+            height={250}
+            alt="Preview"
+          />
         </div>
       </aside>
     </section>

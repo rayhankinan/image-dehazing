@@ -2,6 +2,8 @@ import { useState } from "react";
 import Head from "next/head";
 import PyScript from "@/components/pyscript";
 import UploadImage from "@/components/upload-image";
+import ProcessButton from "@/components/process-button";
+import DisplayImage from "@/components/display-image";
 
 export default function Home() {
   const [url, setUrl] = useState<string>();
@@ -19,11 +21,8 @@ export default function Home() {
       </Head>
       <main>
         <UploadImage url={url} setUrl={setUrl} />
-        {/* This button will be disabled no matter what until the JavaScript has been loaded */}
-        <button py-click="get_blob_url" disabled={!url}>
-          Get Blob URL
-        </button>
-        <div id="output"></div>
+        <ProcessButton url={url} />
+        <DisplayImage />
         <PyScript />
       </main>
     </>
