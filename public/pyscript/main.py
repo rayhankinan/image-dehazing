@@ -23,6 +23,7 @@ import numpy as np
 import copy
 
 
+# Reference: https://github.com/Utkarsh-Deshmukh/Single-Image-Dehazing-Python
 class ImageDehazer:
     def __init__(
             self,
