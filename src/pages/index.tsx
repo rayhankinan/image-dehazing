@@ -1,12 +1,13 @@
 import { useState } from "react";
 import Head from "next/head";
 import PyScript from "@/components/pyscript";
-import UploadImage from "@/components/upload-image";
+import Dropbox from "@/components/dropbox";
+import InputImage from "@/components/input-image";
 import ProcessButton from "@/components/process-button";
-import DisplayImage from "@/components/display-image";
+import OutputImage from "@/components/output-image";
 
 export default function Home() {
-  const [url, setUrl] = useState<string>();
+  const [inputUrl, setInputUrl] = useState<string>();
 
   return (
     <>
@@ -20,10 +21,20 @@ export default function Home() {
         <title>Image Dehazing</title>
       </Head>
       <main>
-        <UploadImage url={url} setUrl={setUrl} />
-        <ProcessButton url={url} />
-        <DisplayImage />
-        <PyScript />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "25px",
+          }}
+        >
+          <Dropbox inputUrl={inputUrl} setInputUrl={setInputUrl} />
+          <InputImage inputUrl={inputUrl} />
+          <ProcessButton inputUrl={inputUrl} />
+          <OutputImage />
+          <PyScript />
+        </div>
       </main>
     </>
   );
