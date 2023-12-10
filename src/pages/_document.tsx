@@ -16,7 +16,7 @@ export default function Document() {
           type="module"
           src="https://pyscript.net/releases/2023.12.1/core.js"
           strategy="beforeInteractive"
-        ></Script>
+        />
       </Head>
       <body>
         <Main />
