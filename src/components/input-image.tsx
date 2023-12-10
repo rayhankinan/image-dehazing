@@ -9,9 +9,9 @@ export default function InputImage({
     <Image
       id="input"
       src={inputUrl}
-      fallbackSrc="/images/250x250.png"
-      width={250}
-      height={250}
+      fallbackSrc="/images/300x300.png"
+      width={300}
+      height={300}
       alt="Input Preview"
     />
   );

@@ -5,10 +5,10 @@ export default function OutputImage() {
   return (
     <Image
       id="output"
-      src="/images/250x250.png"
-      fallbackSrc="/images/250x250.png"
-      width={250}
-      height={250}
+      src="/images/300x300.png"
+      fallbackSrc="/images/300x300.png"
+      width={300}
+      height={300}
       alt="Output Preview"
     />
   );
