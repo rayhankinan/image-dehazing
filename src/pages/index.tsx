@@ -5,6 +5,7 @@ import Dropbox from "@/components/dropbox";
 import InputImage from "@/components/input-image";
 import ProcessButton from "@/components/process-button";
 import OutputImage from "@/components/output-image";
+import DownloadButton from "@/components/download-button";
 
 export default function Home() {
   const [inputUrl, setInputUrl] = useState<string>();
@@ -24,8 +25,9 @@ export default function Home() {
         <div className="flex flex-col items-center justify-center min-h-screen py-2 gap-8">
           <Dropbox inputUrl={inputUrl} setInputUrl={setInputUrl} />
           <InputImage inputUrl={inputUrl} />
-          <ProcessButton inputUrl={inputUrl} />
+          <ProcessButton />
           <OutputImage />
+          <DownloadButton />
           <PyScript />
         </div>
       </main>

@@ -399,6 +399,11 @@ async def process_image(event):
     input_div = document.querySelector("#input")
     input_src = input_div.src
 
+    # If no image is selected, return
+    if not input_src:
+        window.alert("Please select an image first.")
+        return
+
     # Download the image
     response = await pyfetch(input_src)
     data = await response.bytes()
@@ -413,7 +418,7 @@ async def process_image(event):
     arr = convert_pil_to_numpy(image)
 
     # Process the image
-    haze_corrected_image, haze_transmission_map = ImageDehazer().remove_haze(arr)
+    haze_corrected_image, _ = ImageDehazer().remove_haze(arr)
 
     # Reconvert to PIL Image
     processed_image = convert_numpy_to_pil(haze_corrected_image)
@@ -440,3 +445,19 @@ async def process_image(event):
 
     # Set the new blob url
     output_div.src = blobURL
+
+
+def download_image(event):
+    # Get the output div
+    output_div = document.querySelector("#output")
+
+    # If output image is placeholder, return
+    if output_div.src == f"{window.location.origin}/images/300x300.png":
+        window.alert("Please process an image first.")
+        return
+
+    # Get the image url
+    output_src = output_div.src
+
+    # Download the image
+    window.open(output_src, "_blank")
