@@ -1,5 +1,5 @@
 # DOM manipulation (cannot be imported from pyscript package)
-from pyscript import document, window
+from pyscript import document, window, when
 
 # Pyodide (cannot be imported from pyodide package)
 from pyodide.http import pyfetch
@@ -394,6 +394,7 @@ def convert_numpy_to_pil(arr):
 
 
 # Callable from JS
+@when("click", "#process")
 async def process_image(event):
     # Get the image url
     input_div = document.querySelector("#input")
@@ -447,6 +448,7 @@ async def process_image(event):
     output_div.src = blobURL
 
 
+@when("click", "#download")
 def download_image(event):
     # Get the output div
     output_div = document.querySelector("#output")
