@@ -72,21 +72,21 @@ class ImageDehazer:
     def __BoundCon(self, HazeImg):
         if (len(HazeImg.shape) == 3):
             t_b = np.maximum(
-                (self._A[0] - HazeImg[:, :, 0].astype(float)) /
+                (self._A[0] - HazeImg[:, :, 0].astype(np.float32)) /
                 (self._A[0] - self.C0),
-                (HazeImg[:, :, 0].astype(float) - self._A[0]) /
+                (HazeImg[:, :, 0].astype(np.float32) - self._A[0]) /
                 (self.C1 - self._A[0])
             )
             t_g = np.maximum(
-                (self._A[1] - HazeImg[:, :, 1].astype(float)) /
+                (self._A[1] - HazeImg[:, :, 1].astype(np.float32)) /
                 (self._A[1] - self.C0),
-                (HazeImg[:, :, 1].astype(float) - self._A[1]) /
+                (HazeImg[:, :, 1].astype(np.float32) - self._A[1]) /
                 (self.C1 - self._A[1])
             )
             t_r = np.maximum(
-                (self._A[2] - HazeImg[:, :, 2].astype(float)) /
+                (self._A[2] - HazeImg[:, :, 2].astype(np.float32)) /
                 (self._A[2] - self.C0),
-                (HazeImg[:, :, 2].astype(float) - self._A[2]) /
+                (HazeImg[:, :, 2].astype(np.float32) - self._A[2]) /
                 (self.C1 - self._A[2])
             )
             MaxVal = np.maximum(t_b, t_g, t_r)
@@ -94,9 +94,9 @@ class ImageDehazer:
 
         else:
             self._Transmission = np.maximum(
-                (self._A[0] - HazeImg.astype(float)) /
+                (self._A[0] - HazeImg.astype(np.float32)) /
                 (self._A[0] - self.C0),
-                (HazeImg.astype(float) - self._A[0]) /
+                (HazeImg.astype(np.float32) - self._A[0]) /
                 (self.C1 - self._A[0])
             )
             self._Transmission = np.minimum(self._Transmission, 1)
@@ -105,7 +105,7 @@ class ImageDehazer:
             (
                 self.boundaryConstraint_windowSze,
                 self.boundaryConstraint_windowSze
-            ), float
+            ), np.float32
         )
         self._Transmission = cv2.morphologyEx(
             self._Transmission, cv2.MORPH_CLOSE, kernel=kernel)
@@ -129,7 +129,7 @@ class ImageDehazer:
 
         # Computing the weight function... Eq (17) in the paper
 
-        HazeImageDouble = HazeImg.astype(float) / 255.0
+        HazeImageDouble = HazeImg.astype(np.float32) / 255.0
         if (len(HazeImg.shape) == 3):
             Red = HazeImageDouble[:, :, 2]
             d_r = self.__circularConvFilt(Red, Filter)
@@ -249,12 +249,12 @@ class ImageDehazer:
         HazeCorrectedImage = copy.deepcopy(HazeImg)
         if (len(HazeImg.shape) == 3):
             for ch in range(len(HazeImg.shape)):
-                temp = ((HazeImg[:, :, ch].astype(float) -
+                temp = ((HazeImg[:, :, ch].astype(np.float32) -
                         self._A[ch]) / Transmission) + self._A[ch]
                 temp = np.maximum(np.minimum(temp, 255), 0)
                 HazeCorrectedImage[:, :, ch] = temp
         else:
-            temp = ((HazeImg.astype(float) -
+            temp = ((HazeImg.astype(np.float32) -
                     self._A[0]) / Transmission) + self._A[0]
             temp = np.maximum(np.minimum(temp, 255), 0)
             HazeCorrectedImage = temp
@@ -379,7 +379,7 @@ class ImageDehazer:
         self.__BoundCon(HazeImg)
         self.__CalTransmission(HazeImg)
         haze_corrected_img = self.__removeHaze(HazeImg)
-        HazeTransmissionMap = self._Transmission
+        HazeTransmissionMap = (self._Transmission * 255.0).astype(np.uint8)
 
         return haze_corrected_img, HazeTransmissionMap
 
@@ -419,23 +419,36 @@ async def process_image(event):
     arr = convert_pil_to_numpy(image)
 
     # Process the image
-    haze_corrected_image, _ = ImageDehazer().remove_haze(arr)
+    haze_corrected_image, haze = ImageDehazer().remove_haze(arr)
 
     # Reconvert to PIL Image
     processed_image = convert_numpy_to_pil(haze_corrected_image)
+    processed_haze = convert_numpy_to_pil(haze)
 
     # Convert to bytes using format
     output = BytesIO()
     processed_image.save(output, format=format)
     image_bytes = output.getvalue()
 
+    haze_output = BytesIO()
+    processed_haze.save(haze_output, format=format)
+    haze_bytes = haze_output.getvalue()
+
     # Convert to JS object
     content = to_js(image_bytes)
     blob_properties = Object.fromEntries(to_js({"type": Image.MIME[format]}))
 
+    haze_content = to_js(haze_bytes)
+    haze_blob_properties = Object.fromEntries(
+        to_js({"type": Image.MIME[format]})
+    )
+
     # Create a blob url
     blob = Blob.new([content], blob_properties)
-    blobURL = window.URL.createObjectURL(blob)
+    blob_url = window.URL.createObjectURL(blob)
+
+    haze_blob = Blob.new([haze_content], haze_blob_properties)
+    haze_blob_url = window.URL.createObjectURL(haze_blob)
 
     # Get the output div
     output_div = document.querySelector("#output")
@@ -445,10 +458,20 @@ async def process_image(event):
         window.URL.revokeObjectURL(output_div.src)
 
     # Set the new blob url
-    output_div.src = blobURL
+    output_div.src = blob_url
+
+    # Get the haze div
+    haze_div = document.querySelector("#haze")
+
+    # Revoke the previous blob url
+    if haze_div.src:
+        window.URL.revokeObjectURL(haze_div.src)
+
+    # Set the new blob url
+    haze_div.src = haze_blob_url
 
 
-@when("click", "#download")
+@when("click", "#download-output")
 def download_image(event):
     # Get the output div
     output_div = document.querySelector("#output")
@@ -463,3 +486,20 @@ def download_image(event):
 
     # Download the image
     window.open(output_src, "_blank")
+
+
+@when("click", "#download-haze")
+def download_haze(event):
+    # Get the haze div
+    haze_div = document.querySelector("#haze")
+
+    # If haze image is placeholder, return
+    if haze_div.src == f"{window.location.origin}/images/300x300.png":
+        window.alert("Please process an image first.")
+        return
+
+    # Get the image url
+    haze_src = haze_div.src
+
+    # Download the image
+    window.open(haze_src, "_blank")

@@ -5,7 +5,7 @@ import Dropbox from "@/components/dropbox";
 import InputImage from "@/components/input-image";
 import ProcessButton from "@/components/process-button";
 import OutputImage from "@/components/output-image";
-import DownloadButton from "@/components/download-button";
+import HazeImage from "@/components/haze-image";
 
 export default function Home() {
   const [inputUrl, setInputUrl] = useState<string>();
@@ -26,8 +26,10 @@ export default function Home() {
           <Dropbox inputUrl={inputUrl} setInputUrl={setInputUrl} />
           <InputImage inputUrl={inputUrl} />
           <ProcessButton />
-          <OutputImage />
-          <DownloadButton />
+          <div className="flex flex-row gap-8">
+            <OutputImage />
+            <HazeImage />
+          </div>
           <PyScript />
         </div>
       </main>
