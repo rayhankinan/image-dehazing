@@ -1,4 +1,4 @@
-import { Button, Image } from "@nextui-org/react";
+import { Button, Card, CardBody, Image } from "@nextui-org/react";
 
 export default function OutputImage() {
   return (
@@ -12,6 +12,13 @@ export default function OutputImage() {
         alt="Output Preview"
       />
       <Button id="download-output">Download Image</Button>
+      <Card>
+        <CardBody>
+          <p>
+            Root Mean Square Error: <span id="root-mean-square-error">0</span>
+          </p>
+        </CardBody>
+      </Card>
     </div>
   );
 }

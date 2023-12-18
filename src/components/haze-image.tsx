@@ -1,4 +1,4 @@
-import { Button, Image } from "@nextui-org/react";
+import { Button, Card, CardBody, Image } from "@nextui-org/react";
 
 export default function HazeImage() {
   return (
@@ -12,6 +12,14 @@ export default function HazeImage() {
         alt="Haze Preview"
       />
       <Button id="download-haze">Download Haze</Button>
+      <Card>
+        <CardBody>
+          <p>
+            Peak signal-to-noise ratio:{" "}
+            <span id="peak-signal-to-noise-ratio">0 db</span>
+          </p>
+        </CardBody>
+      </Card>
     </div>
   );
 }
