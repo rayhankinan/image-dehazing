@@ -13,6 +13,7 @@ from io import BytesIO
 
 # External Library
 from PIL import Image
+from skimage.metrics import structural_similarity
 import numpy as np
 import cv2
 
@@ -421,15 +422,16 @@ async def process_image(event):
     # Process the image
     haze_corrected_image, haze = ImageDehazer().remove_haze(arr)
 
-    # Count the root mean square error
-    rmse = np.sqrt(
-        np.mean(
-            (arr.astype(np.float32) - haze_corrected_image.astype(np.float32)) ** 2
-        )
-    )
-
     # Count the PSNR
     psnr = cv2.PSNR(arr, haze_corrected_image)
+
+    # Count the SSIM
+    ssim = structural_similarity(
+        arr,
+        haze_corrected_image,
+        channel_axis=-1,
+        data_range=255
+    )
 
     # Reconvert to PIL Image
     processed_image = convert_numpy_to_pil(haze_corrected_image)
@@ -480,17 +482,17 @@ async def process_image(event):
     # Set the new blob url
     haze_div.src = haze_blob_url
 
-    # Get the root mean square error div
-    rmse_div = document.querySelector("#root-mean-square-error")
-
-    # Set the new root mean square error
-    rmse_div.textContent = f"{rmse:.2f}"
-
     # Get the PSNR div
     psnr_div = document.querySelector("#peak-signal-to-noise-ratio")
 
     # Set the new PSNR
     psnr_div.textContent = f"{psnr:.2f} db"
+
+    # Get the SSIM div
+    ssim_div = document.querySelector("#structural-similarity-index")
+
+    # Set the new SSIM
+    ssim_div.textContent = f"{ssim:.4f}"
 
 
 @when("click", "#download-output")

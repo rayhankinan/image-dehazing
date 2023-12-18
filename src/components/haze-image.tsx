@@ -15,8 +15,8 @@ export default function HazeImage() {
       <Card>
         <CardBody>
           <p>
-            Peak signal-to-noise ratio:{" "}
-            <span id="peak-signal-to-noise-ratio">0 db</span>
+            Structural Similarity Index (SSIM):{" "}
+            <span id="structural-similarity-index">0</span>
           </p>
         </CardBody>
       </Card>

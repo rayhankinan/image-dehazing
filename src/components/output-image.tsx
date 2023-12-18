@@ -15,7 +15,8 @@ export default function OutputImage() {
       <Card>
         <CardBody>
           <p>
-            Root Mean Square Error: <span id="root-mean-square-error">0</span>
+            Peak signal-to-noise ratio (PSNR):{" "}
+            <span id="peak-signal-to-noise-ratio">0 db</span>
           </p>
         </CardBody>
       </Card>
